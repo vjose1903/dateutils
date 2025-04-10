@@ -8,13 +8,16 @@
     "email": "vjose1903@outlook.es"
   },
   "type": "commonjs",
-  "main": "index.js",
+  "main": "dist/index.min.js",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "minify": "terser dist/index.js -o dist/index.min.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/vjose1903/dateutils.git"
+  },
+  "devDependencies": {
+    "terser": "^5.39.0"
   }
 }

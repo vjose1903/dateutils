@@ -21,4 +21,7 @@ coverage/
 .vscode/
 
 # Excluir otros archivos innecesarios
-.DS_Store 
+.DS_Store
+
+# Excluir el archivo no minificado
+dist/index.js 
