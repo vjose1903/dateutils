@@ -1,0 +1,24 @@
+# Excluir directorios de desarrollo
+src/
+tests/
+coverage/
+
+# Excluir archivos de configuración
+*.log
+*.ts
+*.tsbuildinfo
+*.map
+
+# Excluir archivos de control de versiones
+.git/
+.gitignore
+
+# Excluir archivos de entorno
+.env
+
+# Excluir archivos de IDEs
+.idea/
+.vscode/
+
+# Excluir otros archivos innecesarios
+.DS_Store 
