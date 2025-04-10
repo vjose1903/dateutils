@@ -87,9 +87,9 @@ export class DateUtils {
    * Retorna el último día del mes correspondiente al año y mes proporcionados.
    * @param params Objeto que contiene el año y el mes del cual se quiere obtener el último día.
    *              - month: El número del mes (1 - 12). Ejemplo: 3.
-   *               - year: El año. Ejemplo: 20234.
+   *              - year: El año. Ejemplo: 2024.
    * @returns El último día del mes como un objeto Date.
-   * @example DateUtils.getLastDayOfMonth({ month: 3, year: 2023 })
+   * @example DateUtils.getLastDayOfMonth({ month: 3, year: 2024 })
    */
   static getLastDayOfMonth(params: { month: number; year: number }) {
     return new Date(params.year, params.month, 0);
@@ -145,17 +145,11 @@ export class DateUtils {
 
     let fecha = '';
     if (!params.only_hour) {
-      fecha = (params.dateFormat ?? 'DD/MM/YYYY')
-        .replace('DD', day)
-        .replace('MM', month)
-        .replace('YYYY', String(year));
+      fecha = (params.dateFormat ?? 'DD/MM/YYYY').replace('DD', day).replace('MM', month).replace('YYYY', String(year));
     }
 
     if (params.include_hour) {
-      const formattedTime = (params.hourFormat ?? 'HH:mm')
-        .replace('HH', hours)
-        .replace('mm', minutes)
-        .replace('ss', seconds);
+      const formattedTime = (params.hourFormat ?? 'HH:mm').replace('HH', hours).replace('mm', minutes).replace('ss', seconds);
 
       fecha += `${fecha.length > 0 ? params.separator : ''}${formattedTime}`;
     }
@@ -164,16 +158,14 @@ export class DateUtils {
   }
 
   /**
-   * Formatea una fecha según las opciones proporcionadas.
+   * Convierte una cadena con formato 'DD/MM/YYYY - HH:mm AM/PM' en un objeto Date.
+   * Si el formato no coincide, intenta crear una fecha estándar.
    * @param params Objeto con las opciones de formateo de la fecha.
-   *               - date: La fecha a formatear (opcional, por defecto es la fecha actual).
-   *               - dateFormat: El formato de la fecha (opcional, por defecto es 'DD/MM/YYYY').
+   *               - dateString: La fecha a formatear (opcional, por defecto es la fecha actual).
    *               - include_hour: Indica si se debe incluir la hora en el formato (opcional, por defecto es false).
-   *               - only_hour: Indica si solo se debe incluir la hora en el formato (opcional, por defecto es false).
-   *               - hourFormat: El formato de la hora (opcional, por defecto es 'LT').
    *               - separator: El separador entre la fecha y la hora (opcional, por defecto es ' - ').
    * @returns Una cadena de texto que representa la fecha formateada según las opciones proporcionadas.
-   * @example DateUtils.format({ date: new Date(), dateFormat: 'DD/MM/YYYY', include_hour: true, only_hour: false, hourFormat: 'LT', separator: ' - ' })
+   * @example DateUtils.convertStringToDate({ dateString: '10/04/2025 - 12:00 PM' })
    */
   static convertStringToDate(params?: { dateString?: any; include_hour?: boolean; separator?: string }) {
     if (params == undefined) params = {};
@@ -215,27 +207,27 @@ export class DateUtils {
 
   /**
    * Retorna la diferencia en horas entre 2 horas establecidas.
-   * @param time1 String || Date hora de inicio para comparar
-   * @param time2 String || Date hora de fin para comparar
+   * @param start String || Date hora de inicio para comparar
+   * @param end String || Date hora de fin para comparar
    * @returns La diferencia en horas entre las dos horas establecidas.
    * @example DateUtils.diffHours('03:12', '15:30')
    */
-  static diffHours(time1: string | Date, time2?: string | Date): number | undefined {
-    if (time2 == undefined) time2 = new Date();
+  static diffHours(start: string | Date, end?: string | Date): number | undefined {
+    if (end == undefined) end = new Date();
 
-    if (typeof time1 === 'string' || typeof time2 === 'string') {
-      if (DateUtils.isValid(new Date(time1))) time1 = new Date(time1);
-      if (DateUtils.isValid(new Date(time2))) time2 = new Date(time2);
+    if (typeof start === 'string' || typeof end === 'string') {
+      if (DateUtils.isValid(new Date(start))) start = new Date(start);
+      if (DateUtils.isValid(new Date(end))) end = new Date(end);
 
-      const match1 = typeof time1 == 'string' ? time1.match(DateUtils.hourMinuteRegExp) : false;
-      const match2 = typeof time2 == 'string' ? time2.match(DateUtils.hourMinuteRegExp) : false;
+      const match1 = typeof start == 'string' ? start.match(DateUtils.hourMinuteRegExp) : false;
+      const match2 = typeof end == 'string' ? end.match(DateUtils.hourMinuteRegExp) : false;
 
-      if (typeof time1 === 'string' && match1) time1 = new Date(`1970-01-01T${time1}:00`);
-      if (typeof time2 === 'string' && match2) time2 = new Date(`1970-01-01T${time2}:00`);
+      if (typeof start === 'string' && match1) start = new Date(`1970-01-01T${start}:00`);
+      if (typeof end === 'string' && match2) end = new Date(`1970-01-01T${end}:00`);
     }
 
-    if (DateUtils.isValid(time1) && DateUtils.isValid(time2) && time1 instanceof Date && time2 instanceof Date) {
-      const diffInMillis = time2.getTime() - time1.getTime();
+    if (DateUtils.isValid(start) && DateUtils.isValid(end) && start instanceof Date && end instanceof Date) {
+      const diffInMillis = end.getTime() - start.getTime();
       const diffInHours = diffInMillis / (1000 * 60 * 60);
       return diffInHours;
     }
@@ -245,22 +237,31 @@ export class DateUtils {
 
   /**
    * Calcula el número de días entre dos fechas
-   * @param fecha1 Primera fecha a comparar
-   * @param fecha2 Segunda fecha a comparar
+   * @param start Primera fecha a comparar
+   * @param end Segunda fecha a comparar
    * @returns número de días entre las dos fechas
    * @example
    * ```typescript
-   * const fecha1 = new Date('2024-01-01');
-   * const fecha2 = new Date('2024-03-01');
-   * const dias = diffDays(fecha1, fecha2); // retorna 60
+   * const start = new Date('2024-01-01');
+   * const end = new Date('2024-03-01');
+   * const dias = diffDays(start, end); // retorna 60
    * ```
    */
-  static diffDays(fecha1: Date, fecha2: Date): number {
-    // Normalizar las fechas a la 1 AM
-    const fecha1Normalizada = new Date(fecha1.getFullYear(), fecha1.getMonth(), fecha1.getDate(), 1, 0, 0, 0);
-    const fecha2Normalizada = new Date(fecha2.getFullYear(), fecha2.getMonth(), fecha2.getDate(), 1, 0, 0, 0);
+  static diffDays(start: string | Date, end?: string | Date): number | undefined {
+    if (end == undefined) end = new Date();
 
-    // Asegurarse de que fecha1 es la más reciente
+    if (typeof start === 'string') {
+      start = new Date(start);
+    }
+    if (typeof end === 'string') {
+      end = new Date(end);
+    }
+
+    // Normalizar las fechas a la 1 AM
+    const fecha1Normalizada = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 1, 0, 0, 0);
+    const fecha2Normalizada = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 1, 0, 0, 0);
+
+    // Asegurarse de que start es la más reciente
     const fechaMayor = fecha1Normalizada > fecha2Normalizada ? fecha1Normalizada : fecha2Normalizada;
     const fechaMenor = fecha1Normalizada > fecha2Normalizada ? fecha2Normalizada : fecha1Normalizada;
 

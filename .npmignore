@@ -3,11 +3,24 @@ src/
 tests/
 coverage/
 
+# Excluir archivos de código fuente y debugging
+*.ts
+!*.d.ts
+*.map
+dist/*.map
+*.tsbuildinfo
+dist/*.js
+!dist/*.min.js
+!dist/*.d.ts
+
 # Excluir archivos de configuración
 *.log
-*.ts
-*.tsbuildinfo
-*.map
+.prettierrc
+.eslintrc*
+rollup.config.js
+rollup.config.cjs
+tsconfig.json
+jest.config.js
 
 # Excluir archivos de control de versiones
 .git/
@@ -15,6 +28,7 @@ coverage/
 
 # Excluir archivos de entorno
 .env
+.env.*
 
 # Excluir archivos de IDEs
 .idea/
@@ -22,3 +36,7 @@ coverage/
 
 # Excluir otros archivos innecesarios
 .DS_Store
+thumbs.db
+*.md
+!README.md
+!LICENSE.md

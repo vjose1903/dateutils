@@ -7,17 +7,29 @@
     "name": "Victor Jose Vásquez Santos",
     "email": "vjose1903@outlook.es"
   },
-  "type": "commonjs",
+  "type": "module",
   "main": "dist/index.min.js",
+  "module": "dist/index.min.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.min.js",
+      "require": "./dist/index.min.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "tsc",
-    "minify": "terser dist/index.js -o dist/index.min.js && terser dist/core/services/functions.service.js -o dist/core/services/functions.service.min.js"
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc && rollup -c"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/vjose1903/dateutils.git"
   },
   "devDependencies": {
-    "terser": "^5.39.0"
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "rollup": "^4.39.0",
+    "rollup-plugin-dts": "^6.1.0"
   }
 }

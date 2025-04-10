@@ -10,14 +10,17 @@ export class fun {
    */
 
   static isEmpty(value: any) {
-    return (
-      value == null ||
-      value === undefined || // es null o indefinido
-      (typeof value === 'string' && value.trim().length === 0) || // es un string vacío o lleno de espacios
-      (typeof value === 'object' && Object.keys(value).length === 0) || // es un objeto y no tiene propiedades
-      (Array.isArray(value) && value.length === 0) || // es un array vacío
-      (value instanceof Date && isNaN(value.getTime())) // es una fecha inválida
-    );
+    if (value == null) return true;
+
+    if (typeof value === 'string') return value.trim().length === 0;
+
+    if (Array.isArray(value)) return value.length === 0;
+
+    if (value instanceof Date) return isNaN(value.getTime());
+    
+    if (typeof value === 'object') return Object.keys(value).length === 0;
+
+    return false;
   }
 
   // __________________________________________________________________________________________________
