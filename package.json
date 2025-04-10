@@ -1,6 +1,6 @@
 {
   "name": "@vjose1903/dateutils",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Paquete para manipular fechas",
   "license": "ISC",
   "author": {
@@ -11,7 +11,7 @@
   "main": "dist/index.min.js",
   "scripts": {
     "build": "tsc",
-    "minify": "terser dist/index.js -o dist/index.min.js"
+    "minify": "terser dist/index.js -o dist/index.min.js && terser dist/core/services/functions.service.js -o dist/core/services/functions.service.min.js"
   },
   "repository": {
     "type": "git",
