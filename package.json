@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "description": "Paquete para manipular fechas",
   "license": "ISC",
-  "author": "Victor José Vásquez Santos",
+  "author": {
+    "name": "Victor Jose Vásquez Santos",
+    "email": "vjose1903@outlook.es"
+  },
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vjose1903/dateutils.git"
   }
 }
