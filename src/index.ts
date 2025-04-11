@@ -145,11 +145,11 @@ export class DateUtils {
 
     let fecha = '';
     if (!params.only_hour) {
-      fecha = (params.dateFormat ?? 'DD/MM/YYYY').replace('DD', day).replace('MM', month).replace('YYYY', String(year));
+      fecha = (params.dateFormat ?? 'DD/MM/YYYY').toLowerCase().replace('dd', day).replace('mm', month).replace('yyyy', String(year));
     }
 
     if (params.include_hour) {
-      const formattedTime = (params.hourFormat ?? 'HH:mm').replace('HH', hours).replace('mm', minutes).replace('ss', seconds);
+      const formattedTime = (params.hourFormat ?? 'HH:mm').toLowerCase().replace('hh', hours).replace('mm', minutes).replace('ss', seconds);
 
       fecha += `${fecha.length > 0 ? params.separator : ''}${formattedTime}`;
     }
