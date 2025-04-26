@@ -67,7 +67,7 @@ export class DateUtils {
    * @returns El primer día del año como un objeto Date.
    * @example DateUtils.getFirstDayOfMonth({ year: 2024 })
    */
-  static getFirstDayOfYear(params?: { year: number, format?: string }): string | Date {
+  static getFirstDayOfYear(params?: { year?: number, format?: string }): string | Date {
     const year = params?.year ?? new Date().getFullYear();
     let date: string | Date = new Date(year, 0, 1);
 
@@ -85,7 +85,7 @@ export class DateUtils {
    * @returns El último día del año como un objeto Date.
    * @example DateUtils.getLastDayOfYear({ year: 2024 })
    */
-  static getLastDayOfYear(params?: { year: number, format?: string }): string | Date {
+  static getLastDayOfYear(params?: { year?: number, format?: string }): string | Date {
     const year = params?.year ?? new Date().getFullYear();
     let date: string | Date = new Date(year, 11, 31);
 
@@ -104,7 +104,7 @@ export class DateUtils {
    * @returns El primer día del mes como un objeto Date.
    * @example DateUtils.getFirstDayOfMonth({ month: 3, year: 2024 })
    */
-  static getFirstDayOfMonth(params?: { month: number, year: number, format?: string }): string | Date {
+  static getFirstDayOfMonth(params?: { month?: number, year?: number, format?: string }): string | Date {
     const year = params?.year ?? new Date().getFullYear();
     const month = params?.month ?? new Date().getMonth() + 1;
     let date: string | Date = new Date(year, month - 1, 1);
@@ -124,7 +124,7 @@ export class DateUtils {
    * @returns El último día del mes como un objeto Date.
    * @example DateUtils.getLastDayOfMonth({ month: 3, year: 2024 })
    */
-  static getLastDayOfMonth(params?: { month: number, year: number, format?: string }): string | Date {
+  static getLastDayOfMonth(params?: { month?: number, year?: number, format?: string }): string | Date {
     const year = params?.year ?? new Date().getFullYear();
     const month = params?.month ?? new Date().getMonth() + 1;
     let date: string | Date = new Date(year, month, 0);
