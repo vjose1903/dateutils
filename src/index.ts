@@ -67,8 +67,33 @@ export class DateUtils {
    * @returns El primer día del año como un objeto Date.
    * @example DateUtils.getFirstDayOfMonth({ year: 2024 })
    */
-  static getFirstDayOfYear(params: { year: number }) {
-    return new Date(params.year, 0, 1);
+  static getFirstDayOfYear(params?: { year: number, format?: string }): string | Date {
+    const year = params?.year ?? new Date().getFullYear();
+    let date: string | Date = new Date(year, 0, 1);
+
+    if (params?.format) {
+      date = DateUtils.format({ date, dateFormat: params.format });
+    }
+
+    return date;
+  }
+
+  /**
+   * Esta función devuelve el último día del año correspondiente al año especificado.
+   * @param params Objeto que contiene el año del cual se quiere obtener el último día.
+   *               - year: El año. Ejemplo: 2024.
+   * @returns El último día del año como un objeto Date.
+   * @example DateUtils.getLastDayOfYear({ year: 2024 })
+   */
+  static getLastDayOfYear(params?: { year: number, format?: string }): string | Date {
+    const year = params?.year ?? new Date().getFullYear();
+    let date: string | Date = new Date(year, 11, 31);
+
+    if (params?.format) {
+      date = DateUtils.format({ date, dateFormat: params.format });
+    }
+
+    return date;
   }
 
   /**
@@ -79,8 +104,16 @@ export class DateUtils {
    * @returns El primer día del mes como un objeto Date.
    * @example DateUtils.getFirstDayOfMonth({ month: 3, year: 2024 })
    */
-  static getFirstDayOfMonth(params: { month: number; year: number }) {
-    return new Date(params.year, params.month - 1, 1);
+  static getFirstDayOfMonth(params?: { month: number, year: number, format?: string }): string | Date {
+    const year = params?.year ?? new Date().getFullYear();
+    const month = params?.month ?? new Date().getMonth() + 1;
+    let date: string | Date = new Date(year, month - 1, 1);
+
+    if (params?.format) {
+      date = DateUtils.format({ date, dateFormat: params.format });
+    }
+
+    return date;
   }
 
   /**
@@ -91,8 +124,16 @@ export class DateUtils {
    * @returns El último día del mes como un objeto Date.
    * @example DateUtils.getLastDayOfMonth({ month: 3, year: 2024 })
    */
-  static getLastDayOfMonth(params: { month: number; year: number }) {
-    return new Date(params.year, params.month, 0);
+  static getLastDayOfMonth(params?: { month: number, year: number, format?: string }): string | Date {
+    const year = params?.year ?? new Date().getFullYear();
+    const month = params?.month ?? new Date().getMonth() + 1;
+    let date: string | Date = new Date(year, month, 0);
+
+    if (params?.format) {
+      date = DateUtils.format({ date, dateFormat: params.format });
+    }
+
+    return date;
   }
 
   /**
