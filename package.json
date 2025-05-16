@@ -1,6 +1,6 @@
 {
   "name": "@vjose1903/dateutils",
-  "version": "1.0.9",
+  "version": "1.0.20",
   "description": "Paquete para manipular fechas",
   "license": "ISC",
   "author": {
@@ -21,7 +21,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc && rollup -c",
-    "npm:publish": "npm run build && npm publish --access=public"
+    "npm:publish": "npm i && npm run build && npm publish --access=public"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,10 @@
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
+    "@types/node": "^22.15.2",
     "rollup": "^4.39.0",
-    "rollup-plugin-dts": "^6.1.0"
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-ignore": "^1.0.10",
+    "ts-node": "^10.9.2"
   }
 }

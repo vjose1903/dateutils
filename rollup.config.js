@@ -1,6 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import dts from 'rollup-plugin-dts';
+import ignore from 'rollup-plugin-ignore';
 
 export default [
   {
@@ -19,6 +20,7 @@ export default [
       }
     ],
     plugins: [
+      ignore(['src/test/*']),
       typescript({
         tsconfig: './tsconfig.json',
       }),

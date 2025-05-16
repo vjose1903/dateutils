@@ -67,7 +67,7 @@ export class DateUtils {
    * @returns El primer día del año como un objeto Date.
    * @example DateUtils.getFirstDayOfMonth({ year: 2024 })
    */
-  static getFirstDayOfYear(params?: { year?: number, format?: string }): string | Date {
+  static getFirstDayOfYear(params?: { year?: number; format?: string }): string | Date {
     const year = params?.year ?? new Date().getFullYear();
     let date: string | Date = new Date(year, 0, 1);
 
@@ -85,7 +85,7 @@ export class DateUtils {
    * @returns El último día del año como un objeto Date.
    * @example DateUtils.getLastDayOfYear({ year: 2024 })
    */
-  static getLastDayOfYear(params?: { year?: number, format?: string }): string | Date {
+  static getLastDayOfYear(params?: { year?: number; format?: string }): string | Date {
     const year = params?.year ?? new Date().getFullYear();
     let date: string | Date = new Date(year, 11, 31);
 
@@ -104,7 +104,7 @@ export class DateUtils {
    * @returns El primer día del mes como un objeto Date.
    * @example DateUtils.getFirstDayOfMonth({ month: 3, year: 2024 })
    */
-  static getFirstDayOfMonth(params?: { month?: number, year?: number, format?: string }): string | Date {
+  static getFirstDayOfMonth(params?: { month?: number; year?: number; format?: string }): string | Date {
     const year = params?.year ?? new Date().getFullYear();
     const month = params?.month ?? new Date().getMonth() + 1;
     let date: string | Date = new Date(year, month - 1, 1);
@@ -124,7 +124,7 @@ export class DateUtils {
    * @returns El último día del mes como un objeto Date.
    * @example DateUtils.getLastDayOfMonth({ month: 3, year: 2024 })
    */
-  static getLastDayOfMonth(params?: { month?: number, year?: number, format?: string }): string | Date {
+  static getLastDayOfMonth(params?: { month?: number; year?: number; format?: string }): string | Date {
     const year = params?.year ?? new Date().getFullYear();
     const month = params?.month ?? new Date().getMonth() + 1;
     let date: string | Date = new Date(year, month, 0);
@@ -149,9 +149,15 @@ export class DateUtils {
    * Verifica si el valor de una variable es de tipo Date.
    * @param value Variable a evaluar
    * @returns true or false.
-   * @example DateUtils.isDate()
+   * @example DateUtils.isValid()
    */
-  static isValid(value: any): boolean {
+  static isValid(value: Date | string): boolean {
+    if (typeof value === 'string') {
+      const date = new Date(value);
+
+      return !isNaN(date.getTime());
+    }
+
     return value instanceof Date && !isNaN(value.getTime());
   }
 
@@ -257,8 +263,8 @@ export class DateUtils {
     if (end == undefined) end = new Date();
 
     if (typeof start === 'string' || typeof end === 'string') {
-      if (DateUtils.isValid(new Date(start))) start = new Date(start);
-      if (DateUtils.isValid(new Date(end))) end = new Date(end);
+      if (DateUtils.isValid(start)) start = new Date(start);
+      if (DateUtils.isValid(end)) end = new Date(end);
 
       const match1 = typeof start == 'string' ? start.match(DateUtils.hourMinuteRegExp) : false;
       const match2 = typeof end == 'string' ? end.match(DateUtils.hourMinuteRegExp) : false;
@@ -311,110 +317,136 @@ export class DateUtils {
   }
 
   /**
-   * Resta horas a un objeto Date dado y devuelve el nuevo objeto Date.
-   * @param hoursToSubtract - El número de horas a restar.
-   * @param date - El objeto Date del cual se restarán las horas.
-   * @returns El nuevo objeto Date con las horas restadas.
-   * * @example DateUtils.diffHours(15, new Date())
+   * Añade una cantidad específica a una fecha en la unidad de tiempo especificada.
+   * @param value - El número a añadir.
+   * @param unit - La unidad de tiempo: 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months' o 'years'.
+   * @param date - La fecha a modificar (opcional, por defecto es la fecha actual).
+   * @returns El nuevo objeto Date con el tiempo añadido.
+   * @example
+   * ```typescript
+   * // Añadir 5 horas a la fecha actual
+   * DateUtils.add(5, 'hours');
+   *
+   * // Añadir 3 días a una fecha específica
+   * DateUtils.add(3, 'days', '2023-05-15');
+   *
+   * // Añadir 2 semanas
+   * DateUtils.add(2, 'weeks', new Date());
+   * ```
    */
-  static subtractHours(hoursToSubtract: number, date?: string | Date): Date {
-    if (date == undefined) date = new Date();
+  static add(value: number, unit: 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years', date?: string | Date): Date {
+    if (isNaN(Number(value))) {
+      throw new Error('El valor a añadir debe ser un número');
+    } else {
+      if (date == undefined) date = new Date();
 
-    if (typeof date === 'string') {
-      if (DateUtils.isValid(new Date(date))) date = new Date(date);
+      if (typeof date === 'string') {
+        if (DateUtils.isValid(date)) date = new Date(date);
 
-      const match1 = typeof date == 'string' ? date.match(DateUtils.hourMinuteRegExp) : false;
-      if (typeof date === 'string' && match1) date = new Date(`1970-01-01T${date}:00`);
+        const match1 = typeof date == 'string' ? date.match(DateUtils.hourMinuteRegExp) : false;
+        if (typeof date === 'string' && match1) date = new Date(`1970-01-01T${date}:00`);
+      }
+
+      if (DateUtils.isValid(date) && date instanceof Date) {
+        const newDate = new Date(date.getTime());
+
+        switch (unit) {
+          case 'seconds':
+            newDate.setSeconds(newDate.getSeconds() + value);
+            break;
+          case 'minutes':
+            newDate.setMinutes(newDate.getMinutes() + value);
+            break;
+          case 'hours':
+            newDate.setHours(newDate.getHours() + value);
+            break;
+          case 'days':
+            newDate.setDate(newDate.getDate() + value);
+            break;
+          case 'weeks':
+            newDate.setDate(newDate.getDate() + value * 7);
+            break;
+          case 'months':
+            newDate.setMonth(newDate.getMonth() + value);
+            break;
+          case 'years':
+            newDate.setFullYear(newDate.getFullYear() + value);
+            break;
+        }
+
+        return newDate;
+      }
+
+      return new Date();
     }
-
-    if (DateUtils.isValid(date) && date instanceof Date) {
-      const newDate = new Date(date.getTime());
-      newDate.setHours(newDate.getHours() - hoursToSubtract);
-
-      return newDate;
-    }
-
-    return new Date();
   }
 
   /**
-   * Resta días a un objeto Date dado y devuelve el nuevo objeto Date.
-   * @param daysToSubtract - El número de días a restar.
-   * @param date - El objeto Date del cual se restarán los días.
-   * @returns El nuevo objeto Date con los días restados.
-   * @example DateUtils.subtractDays(5, new Date())
+   * Resta una cantidad específica a una fecha en la unidad de tiempo especificada.
+   * @param value - El número a restar.
+   * @param unit - La unidad de tiempo: 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months' o 'years'.
+   * @param date - La fecha a modificar (opcional, por defecto es la fecha actual).
+   * @returns El nuevo objeto Date con el tiempo restado.
+   * @example
+   * ```typescript
+   * // Restar 5 horas a la fecha actual
+   * DateUtils.subtract(5, 'hours');
+   *
+   * // Restar 3 días a una fecha específica
+   * DateUtils.subtract(3, 'days', '2023-05-15');
+   *
+   * // Restar 2 semanas
+   * DateUtils.subtract(2, 'weeks', new Date());
+   * ```
    */
-  static subtractDays(daysToSubtract: number, date?: string | Date): Date {
-    if (date == undefined) date = new Date();
-
-    if (typeof date === 'string') {
-      if (DateUtils.isValid(new Date(date))) date = new Date(date);
-
-      const match1 = typeof date == 'string' ? date.match(DateUtils.hourMinuteRegExp) : false;
-      if (typeof date === 'string' && match1) date = new Date(`1970-01-01T${date}:00`);
+  static subtract(value: number, unit: 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years', date?: string | Date): Date {
+    if (isNaN(Number(value))) {
+      throw new Error('El valor a añadir debe ser un número');
+    } else {
+      return DateUtils.add(-value, unit, date);
     }
-
-    if (DateUtils.isValid(date) && date instanceof Date) {
-      const newDate = new Date(date.getTime());
-      newDate.setDate(newDate.getDate() - daysToSubtract);
-
-      return newDate;
-    }
-
-    return new Date();
   }
 
   /**
-   * Añade horas a un objeto Date dado y devuelve el nuevo objeto Date.
-   * @param hoursToAdd - El número de horas a añadir.
-   * @param date - El objeto Date al cual se añadirán las horas.
-   * @returns El nuevo objeto Date con las horas añadidas.
-   * @example DateUtils.addHours(5, new Date())
+   * Compara dos fechas y determina si la fecha final es mayor, menor o igual a la fecha inicial.
+   * @param startDate - La fecha inicial para la comparación (string o Date).
+   * @param endDate - La fecha final para la comparación (string o Date).
+   * @returns Un número que indica la relación entre las fechas:
+   *          -1 si la fecha final es menor que la inicial
+   *           0 si las fechas son iguales
+   *           1 si la fecha final es mayor que la inicial
+   * @example
+   * ```typescript
+   * const inicio = new Date('2024-01-01');
+   * const fin = new Date('2024-03-01');
+   * const resultado = DateUtils.compareDates(inicio, fin); // retorna 1
+   * ```
    */
-  static addHours(hoursToAdd: number, date?: string | Date): Date {
-    if (date == undefined) date = new Date();
+  static compareDates(startDate: string | Date, endDate: string | Date): number {
+    if (typeof startDate === 'string') {
+      if (DateUtils.isValid(startDate)) startDate = new Date(startDate);
 
-    if (typeof date === 'string') {
-      if (DateUtils.isValid(new Date(date))) date = new Date(date);
-
-      const match1 = typeof date == 'string' ? date.match(DateUtils.hourMinuteRegExp) : false;
-      if (typeof date === 'string' && match1) date = new Date(`1970-01-01T${date}:00`);
+      const match1 = typeof startDate == 'string' ? startDate.match(DateUtils.hourMinuteRegExp) : false;
+      if (typeof startDate === 'string' && match1) startDate = new Date(`1970-01-01T${startDate}:00`);
     }
 
-    if (DateUtils.isValid(date) && date instanceof Date) {
-      const newDate = new Date(date.getTime());
-      newDate.setHours(newDate.getHours() + hoursToAdd);
+    if (typeof endDate === 'string') {
+      if (DateUtils.isValid(endDate)) endDate = new Date(endDate);
 
-      return newDate;
+      const match2 = typeof endDate == 'string' ? endDate.match(DateUtils.hourMinuteRegExp) : false;
+      if (typeof endDate === 'string' && match2) endDate = new Date(`1970-01-01T${endDate}:00`);
     }
 
-    return new Date();
-  }
-
-  /**
-   * Añade días a un objeto Date dado y devuelve el nuevo objeto Date.
-   * @param daysToAdd - El número de días a añadir.
-   * @param date - El objeto Date al cual se añadirán los días.
-   * @returns El nuevo objeto Date con los días añadidos.
-   * @example DateUtils.addDays(3, new Date())
-   */
-  static addDays(daysToAdd: number, date?: string | Date): Date {
-    if (date == undefined) date = new Date();
-
-    if (typeof date === 'string') {
-      if (DateUtils.isValid(new Date(date))) date = new Date(date);
-
-      const match1 = typeof date == 'string' ? date.match(DateUtils.hourMinuteRegExp) : false;
-      if (typeof date === 'string' && match1) date = new Date(`1970-01-01T${date}:00`);
+    if (DateUtils.isValid(startDate) && DateUtils.isValid(endDate) && startDate instanceof Date && endDate instanceof Date) {
+      if (endDate.getTime() > startDate.getTime()) {
+        return 1; // La fecha final es mayor
+      } else if (endDate.getTime() < startDate.getTime()) {
+        return -1; // La fecha final es menor
+      } else {
+        return 0; // Las fechas son iguales
+      }
     }
 
-    if (DateUtils.isValid(date) && date instanceof Date) {
-      const newDate = new Date(date.getTime());
-      newDate.setDate(newDate.getDate() + daysToAdd);
-
-      return newDate;
-    }
-
-    return new Date();
+    return 0; // Si hay algún problema con las fechas, por defecto se consideran iguales
   }
 }

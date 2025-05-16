@@ -32,3 +32,5 @@ jspm_packages/
 *.njsproj
 *.sln
 *.sw? 
+
+src/test/*
