@@ -170,35 +170,49 @@ export class DateUtils {
    *               - only_hour: Indica si solo se debe incluir la hora en el formato (opcional, por defecto es false).
    *               - hourFormat: El formato de la hora (opcional, por defecto es 'LT').
    *               - separator: El separador entre la fecha y la hora (opcional, por defecto es ' - ').
+   *               - use24Hours: Indica si se debe usar formato de 24 horas (opcional, por defecto es false).
    * @returns Una cadena de texto que representa la fecha formateada según las opciones proporcionadas.
-   * @example DateUtils.format({ date: new Date(), dateFormat: 'DD/MM/YYYY', include_hour: true, only_hour: false, hourFormat: 'LT', separator: ' - ' })
+   * @example DateUtils.format({ date: new Date(), dateFormat: 'DD/MM/YYYY', include_hour: true, only_hour: false, hourFormat: 'LT', separator: ' - ', use24Hours: false })
    */
-  static format(params?: { date?: any; dateFormat?: string; include_hour?: boolean; only_hour?: boolean; hourFormat?: string; separator?: string }) {
-    if (params == undefined) params = {};
-    if (fun.hasValue(params.date) && typeof params.date == 'string') params.date = new Date(params.date);
-    if (fun.isEmpty(params.date)) params.date = new Date();
+  static format(params?: { date?: any; dateFormat?: string; include_hour?: boolean; only_hour?: boolean; hourFormat?: string; separator?: string; use24Hours?: boolean }) {
+    let { date = new Date(), dateFormat = 'DD/MM/YYYY', include_hour, only_hour = false, hourFormat, separator = ' ', use24Hours = false } = params ?? {};
 
-    if (fun.isEmpty(params.only_hour)) params.only_hour = params.only_hour ?? false;
-    if (fun.isEmpty(params.include_hour)) params.include_hour = (fun.hasValue(params.only_hour) && params.only_hour) || fun.hasValue(params.hourFormat);
-    if (params?.separator == undefined) params.separator = ' - ';
+    if (fun.hasValue(date) && typeof date == 'string') date = new Date(date);
+    if (fun.isEmpty(include_hour)) include_hour = (fun.hasValue(only_hour) && only_hour) || fun.hasValue(hourFormat);
 
-    const date = params.date instanceof Date ? params.date : new Date(params.date);
+    date = date instanceof Date ? date : new Date(date);
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
+    const hours24 = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
 
     let fecha = '';
-    if (!params.only_hour) {
-      fecha = (params.dateFormat ?? 'DD/MM/YYYY').toLowerCase().replace('dd', day).replace('mm', month).replace('yyyy', String(year));
+    if (!only_hour) {
+      fecha = dateFormat.toLowerCase().replace('dd', day).replace('mm', month).replace('yyyy', year.toString());
     }
 
-    if (params.include_hour) {
-      const formattedTime = (params.hourFormat ?? 'HH:mm').toLowerCase().replace('hh', hours).replace('mm', minutes).replace('ss', seconds);
+    if (include_hour) {
+      // Determinamos si es AM o PM y generamos horas en formato 12h
+      const isPM = date.getHours() >= 12;
+      const ampm = isPM ? 'pm' : 'am';
+      const hours12 = String(date.getHours() % 12 || 12).padStart(2, '0');
 
-      fecha += `${fecha.length > 0 ? params.separator : ''}${formattedTime}`;
+      let formattedTime = (hourFormat ?? 'hh:mm a').toLowerCase();
+
+      // Usamos hours24 o hours12 según el parámetro use24Hours
+      formattedTime = formattedTime
+        .replace('hh', use24Hours ? hours24 : hours12)
+        .replace('mm', minutes)
+        .replace('ss', seconds);
+
+      // Agregamos AM/PM solo si NO se usa formato de 24 horas y hay 'a' en el formato
+      if (formattedTime.includes('a')) {
+        formattedTime = formattedTime.replace('a', use24Hours ? '' : ampm);
+      }
+
+      fecha += `${fecha.length > 0 ? separator : ''}${formattedTime}`;
     }
 
     return fecha;
